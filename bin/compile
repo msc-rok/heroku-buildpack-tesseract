@@ -1,6 +1,7 @@
 #!/bin/bash
 
-env_dir=$1
+env_dir=$3
+echo 'ENV_DIR:' $env_dir
 whitelist_regex=${2:-'^(TESSERACT_OCR_LANGUAGES)$'}
 blacklist_regex=${3:-''}
 if [ -d "$env_dir" ]; then
@@ -11,9 +12,12 @@ if [ -d "$env_dir" ]; then
  done
 fi
 
+echo 'TESSERACT_OCR_LANGUAGES:' $TESSERACT_OCR_LANGUAGES
 if [ -z $TESSERACT_OCR_LANGUAGES ]; then
  TESSERACT_OCR_LANGUAGES=eng
+ echo 'TESSERACT_OCR_LANGUAGES:' $TESSERACT_OCR_LANGUAGES '(fallback)'
 fi
+
 
 BUILD_DIR=$1
 TESSERACT_OCR_VERSION=3.04.01
