@@ -4,7 +4,6 @@ export_env_dir() {
   env_dir=$1
   whitelist_regex=${2:-''}
   blacklist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
-  echo $(cat $env_dir/TESSERACT_OCR_LANGUAGES)
   if [ -d "$env_dir" ]; then
     for e in $(ls $env_dir); do
       echo "$e" | grep -E "$whitelist_regex" | grep -qvE "$blacklist_regex" &&
@@ -13,6 +12,7 @@ export_env_dir() {
     done
   fi
 }
+
 export_env_dir $3
 
 echo 'TESSERACT_OCR_LANGUAGES:' $TESSERACT_OCR_LANGUAGES
@@ -21,10 +21,15 @@ if [ -z $TESSERACT_OCR_LANGUAGES ]; then
  echo 'TESSERACT_OCR_LANGUAGES:' $TESSERACT_OCR_LANGUAGES '(fallback)'
 fi
 
+echo 'TESSERACT_OCR_VERSION:' $TESSERACT_OCR_VERSION
+if [ -z $TESSERACT_OCR_VERSION ]; then
+ TESSERACT_OCR_VERSION=3.04.01
+ echo 'TESSERACT_OCR_VERSION:' $TESSERACT_OCR_VERSION '(fallback)'
+fi
+TESSERACT_OCR_DATA_VERSION=$($($TESSERACT_OCR_VERSION | cut -d'.' -f 1)'.'$($TESSERACT_OCR_VERSION | cut -d'.' -f 2)'.00')
+echo 'TESSERACT_OCR_DATA_VERSION:' $TESSERACT_OCR_DATA_VERSION
 
 BUILD_DIR=$1
-TESSERACT_OCR_VERSION=3.04.01
-TESSERACT_OCR_DATA_VERSION=3.04.00
 
 TESSERACT_OCR_TGZ=tesseract-ocr-$TESSERACT_OCR_VERSION.tar.gz
 
