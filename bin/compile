@@ -1,4 +1,20 @@
 #!/bin/bash
+
+env_dir=$1
+whitelist_regex=${2:-'^(TESSERACT_OCR_LANGUAGES)$'}
+blacklist_regex=${3:-''}
+if [ -d "$env_dir" ]; then
+ for e in $(ls $env_dir); do
+   echo "$e" | grep -E "$whitelist_regex" | grep -qvE "$blacklist_regex" &&
+   export "$e=$(cat $env_dir/$e)"
+   :
+ done
+fi
+
+if [ -z $TESSERACT_OCR_LANGUAGES ]; then
+ TESSERACT_OCR_LANGUAGES=eng
+fi
+
 BUILD_DIR=$1
 TESSERACT_OCR_VERSION=3.04.01
 TESSERACT_OCR_DATA_VERSION=3.04.00
@@ -10,8 +26,6 @@ INSTALL_DIR_TRAINING_DATA=$BUILD_DIR/vendor/tessdata
 TRAINING_DATA_DIR=${HOME}/vendor
 TESSERACT_OCR_DIR=${HOME}/vendor/tesseract-ocr
 ENVSCRIPT=$BUILD_DIR/.profile.d/tesseract-ocr.sh
-
-TESSERACT_OCR_LANGUAGES=eng
 
 echo "Unpacking Tesseract-OCR binaries"
 mkdir -p $INSTALL_DIR
