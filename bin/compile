@@ -2,14 +2,15 @@
 
 env_dir=$3
 echo 'ENV_DIR:' $env_dir
-whitelist_regex=${2:-'^(TESSERACT_OCR_LANGUAGES)$'}
-blacklist_regex=${3:-''}
+whitelist_regex=${2:-''}
+blacklist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
 if [ -d "$env_dir" ]; then
- for e in $(ls $env_dir); do
-   echo "$e" | grep -E "$whitelist_regex" | grep -qvE "$blacklist_regex" &&
-   export "$e=$(cat $env_dir/$e)"
-   :
- done
+  info "Will export the following config vars:"
+  for e in $(ls $env_dir); do
+    echo "$e" | grep -E "$whitelist_regex" | grep -vE "$blacklist_regex" &&
+    export "$e=$(cat $env_dir/$e)"
+    :
+  done
 fi
 
 echo 'TESSERACT_OCR_LANGUAGES:' $TESSERACT_OCR_LANGUAGES
